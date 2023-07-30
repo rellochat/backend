@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Getting Started",
+    "id": "001",
+    "icon": "GettingStarted.png",
+    "description": "You created your rello account!"
+  },
+  {
+    "title": "Chatty Dude or Woman...",
+    "id": "002",
+    "icon": "ChattyDudeOrWoman.png",
+    "description": "Send 100 messages."
+  },
+  {
+    "title": "Wordsmith!",
+    "id": "003",
+    "icon": "Wordsmith.png",
+    "description": "Send a message with more than 100 words."
+  },
+  {
+    "title": "Silence Breaker",
+    "id": "004",
+    "icon": "SilenceBreaker.png",
+    "description": "Be the first to send a message in a new channel."
+  },
+  {
+    "title": "Party Starter!",
+    "id": "005",
+    "icon": "PartyStarter.png",
+    "description": "Create your first server."
+  },
+  {
+    "title": "Master of the Emojis",
+    "id": "006",
+    "icon": "MasterOfEmojis.png",
+    "description": "Use 50 different emojis in a single message"
+  },
+  {
+    "title": "Nightowl",
+    "id": "007",
+    "icon": "Nightowl.png",
+    "description": "Send a message after midnight"
+  },
+  {
+    "title": "Welcoming Committee",
+    "id": "008",
+    "icon": "",
+    "description": "Welcome 5 new members to a server"
+  },
+  {
+    "title": "Popular Kid",
+    "id": "009",
+    "icon": "",
+    "description": "Have 100 friends"
+  }
+]
