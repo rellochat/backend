@@ -4,11 +4,11 @@ import Collection from "../utils/Collection";
 import WebSocket from "ws";
 import IUser from "../../interfaces/IUser";
 import StatusCodes from "../constants/StatusCodes";
-import User from "../models/User";
-import { Document, Model } from "mongoose";
+import { Document } from "mongoose";
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.get("Authorization");
+    if (typeof token !== "string") return res.status(401).json({ error: "Access Denied" });
     const parts = Generator.generateDataFromToken(token!);
 
     Collection.users.get(parts._id!).then((user) => {
