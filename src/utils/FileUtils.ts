@@ -7,9 +7,19 @@ export const sendFile = (pth: string, res: Response) => {
     return res.status(404).json({ error: "Resource not found" });
 }
 
-export const uploadFile = async (pth: string, data: string) => {
-    const bufferData = Buffer.from(data.split(",")[1], "base64");
-    const imagePath = path.join(__dirname, `../../public/${pth}`);
+// export const uploadFile = async (pth: string, data: string) => {
+//     const bufferData = Buffer.from(data.split(",")[1], "base64");
+//     const imagePath = path.join(__dirname, `../../public/${pth}`);
 
-    fs.writeFile(imagePath, bufferData, () => { });
-}
+//     fs.writeFile(imagePath, bufferData, () => { });
+// }
+
+// export const uploadFile = async (id: string, data: string) => {
+//     // const bufferData = Buffer.from(data.split(",")[1], "base64");
+//     return await fetch(`http://localhost:3002/guild/${id}`, {
+//         method: "POST",
+//         body: JSON.stringify({
+//             data
+//         })
+//     })
+// }
