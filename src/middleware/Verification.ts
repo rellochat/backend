@@ -24,6 +24,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 }
 
 export const verifyTokenForWS = (ws: WebSocket, token: string, callback: (user: Document<unknown, {}, IUser> & IUser & Required<{ _id: string; }>) => void) => {
+    if(!token) return ws.close(StatusCodes.CLOSE.UNKNOWN_ERROR.CODE, StatusCodes.CLOSE.UNKNOWN_ERROR.ERROR);
     const parts = Generator.generateDataFromToken(token);
     Collection.users.get(parts._id!).then((user) => {
         if (!user

@@ -7,7 +7,7 @@ export default interface IUser {
     blocked: string[] | IUser[],
     bot: boolean,
     createdAt: Date,
-    email: string,
+    email?: string,
     friends: string[] | IUser[],
     guilds: any[],
     lastLogin: Date,

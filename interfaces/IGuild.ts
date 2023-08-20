@@ -7,5 +7,7 @@ export default interface IGuild {
     emojis: string[],
     icon: string,
     name: string,
+    ownerId: string,
     roles: string[],
+    members: string[]
 }

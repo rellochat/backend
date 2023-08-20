@@ -10,6 +10,10 @@ const schema = new Schema({
             return Generator.generateSnowflake()
         },
     },
+    channels: {
+        type: [String],
+        ref: "channels"
+    },
     guildId: {
         type: String,
         required: true

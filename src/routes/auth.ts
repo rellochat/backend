@@ -6,7 +6,7 @@ import Generator from "../utils/Generator";
 import { verifyToken } from "../middleware/Verification";
 const router = express.Router();
 
-router.get("/", verifyToken, async (req: any, res, next) => {
+router.get("/", verifyToken, async (req: any, res) => {
     res.status(200).json({user: req.user});
 });
 

@@ -11,6 +11,7 @@ const schema = new Schema({
     },
     channels: {
         type: [String],
+        ref: "channels",
         required: true
     },
     description: {
@@ -36,6 +37,11 @@ const schema = new Schema({
     roles: {
         type: [String],
         default: []
+    },
+    members: {
+        type: [String],
+        ref: "guild_members",
+        required: true
     }
 }, { _id: false });
 

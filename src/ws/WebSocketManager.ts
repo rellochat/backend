@@ -3,12 +3,15 @@ import { WebSocket, WebSocketServer } from "ws";
 import { verifyTokenForWS } from "../middleware/Verification";
 import OpCodes from "../constants/OpCodes";
 import StatusCodes from "../constants/StatusCodes";
+import IUser from "../../interfaces/IUser";
+import { Document } from "mongoose";
 
 export default class WebSocketManager {
 
     wss: WebSocketServer;
     heartbeatInterval = 45000;
-    clients: Map<string, any> = new Map();
+    static clients: Map<WebSocket, any> = new Map();
+    static users: Map<string, { ws: WebSocket, instance: Document<unknown, {}, IUser> & IUser & Required<{ _id: string; }> }> = new Map();
     clientHeartbeats: Map<WebSocket, NodeJS.Timeout> = new Map();
 
     constructor(server: Server) {
@@ -22,6 +25,7 @@ export default class WebSocketManager {
                 ws.close(StatusCodes.CLOSE.SESSION_TIMEOUT.CODE, StatusCodes.CLOSE.SESSION_TIMEOUT.ERROR);
             }, this.heartbeatInterval * 2);
             this.clientHeartbeats.set(ws as WebSocket, heartbeatTimer);
+
             ws.send(JSON.stringify({
                 op: OpCodes.HELLO,
                 data: {
@@ -32,7 +36,7 @@ export default class WebSocketManager {
             ws.on("message", (data) => {
                 const payload = JSON.parse(data.toString());
                 switch (payload.op) {
-                    case 1:
+                    case OpCodes.HEARTBEAT:
                         if (this.clientHeartbeats.has(ws)) {
                             const timer = this.clientHeartbeats.get(ws);
                             if (timer) {
@@ -44,9 +48,17 @@ export default class WebSocketManager {
                             }
                         }
                         break;
-                    case 2:
+                    case OpCodes.IDENTIFY:
                         verifyTokenForWS(ws, payload.data.token, (user) => {
-                            this.clients.set(user.id, user);
+                            WebSocketManager.clients.set(ws, user);
+                            WebSocketManager.users.set(user._id, { ws: ws, instance: user });
+                            user.status = "online";
+                            user.save();
+                            ws.send(JSON.stringify({
+                                op: OpCodes.DISPATCH,
+                                eventType: "Ready",
+                                data: { user }
+                            }))
                         })
                         break;
                 }
@@ -57,10 +69,48 @@ export default class WebSocketManager {
                     const timer = this.clientHeartbeats.get(ws);
                     if (timer) {
                         clearTimeout(timer);
-                        this.clientHeartbeats.delete(ws);
+
+                        const user = WebSocketManager.clients.get(ws);
+
+                        if (user) {
+                            user.status = "offline";
+                            user.save();
+                        }
+
+                        this.clientHeartbeats?.delete(ws);
+                        WebSocketManager.users.delete(user?._id);
+                        WebSocketManager.clients.delete(ws);
                     }
                 }
             })
         })
+    }
+
+    public static broadcast(data: any) {
+        const eventData = JSON.stringify({
+            op: OpCodes.DISPATCH,
+            ...data
+        });
+
+        this.clients.forEach((userSocket, ws) => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(eventData);
+            }
+        });
+    }
+
+    public static send(id: string, data: any) {
+        const eventData = JSON.stringify({
+            op: OpCodes.DISPATCH,
+            ...data
+        });
+
+        const user = WebSocketManager.users.get(id);
+
+        if (user) {
+            if (user.ws.readyState === WebSocket.OPEN) {
+                user.ws.send(eventData);
+            }
+        }
     }
 }

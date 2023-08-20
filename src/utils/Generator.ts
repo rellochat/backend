@@ -46,7 +46,6 @@ export default class Generator {
     }
 
     public static generateDataFromToken(token: string) {
-
         const splitToken = token.split(".");
 
         const user: { _id: null | string, lastLogin: null | Date, secret: null | string } = {
